@@ -212,7 +212,7 @@ import org.jooq.meta.ParameterDefinition;
 import org.jooq.meta.RoutineDefinition;
 import org.jooq.meta.SchemaDefinition;
 import org.jooq.meta.SequenceDefinition;
-// ...
+import org.jooq.meta.AbstractDatabase;
 import org.jooq.meta.SyntheticDaoDefinition;
 import org.jooq.meta.TableDefinition;
 // ...
@@ -226,7 +226,7 @@ import org.jooq.meta.jaxb.GeneratedTextBlocks;
 import org.jooq.meta.jaxb.SyntheticDaoMethodType;
 import org.jooq.meta.jaxb.SyntheticDaoType;
 import org.jooq.meta.jaxb.VisibilityModifier;
-// ...
+import org.jooq.meta.jaxb.OnError;
 // ...
 // ...
 // ...
@@ -572,7 +572,7 @@ public class JavaGenerator extends AbstractGenerator {
                     log.info("Excluding empty catalog", catalog);
             }
             catch (Exception e) {
-                throw new GeneratorException("Error generating code for catalog " + catalog, e);
+                reportError("Error generating code for catalog " + catalog, e);
             }
         }
 
@@ -668,7 +668,7 @@ public class JavaGenerator extends AbstractGenerator {
                     log.info("Excluding empty schema", schema);
             }
             catch (Exception e) {
-                throw new GeneratorException("Error generating code for schema " + schema, e);
+                reportError("Error generating code for schema " + schema, e);
             }
         }
     }
@@ -1108,7 +1108,7 @@ public class JavaGenerator extends AbstractGenerator {
             }
         }
         catch (Exception e) {
-            log.error("Error while generating unique keys for schema " + schema, e);
+            reportError("Error while generating unique keys for schema " + schema, e);
         }
 
         // Foreign keys
@@ -1141,7 +1141,7 @@ public class JavaGenerator extends AbstractGenerator {
             }
         }
         catch (Exception e) {
-            log.error("Error while generating foreign keys for schema " + schema, e);
+            reportError("Error while generating foreign keys for schema " + schema, e);
         }
 
         // [#1459] [#10554] [#10653] Print nested classes for actual static field initialisations
@@ -1246,7 +1246,7 @@ public class JavaGenerator extends AbstractGenerator {
                 allIndexes.add(index);
             }
             catch (Exception e) {
-                log.error("Error while generating index " + index, e);
+                reportError("Error while generating index " + index, e);
             }
         }
 
@@ -1662,7 +1662,7 @@ public class JavaGenerator extends AbstractGenerator {
                 }
             }
             catch (Exception e) {
-                log.error("Error while generating table record " + table, e);
+                reportError("Error while generating table record " + table, e);
             }
         }
 
@@ -1887,7 +1887,7 @@ public class JavaGenerator extends AbstractGenerator {
 
                 }
                 catch (Exception e) {
-                    log.error("Error while generating routine " + routine, e);
+                    reportError("Error while generating routine " + routine, e);
                 }
             }
         }
@@ -3341,7 +3341,7 @@ public class JavaGenerator extends AbstractGenerator {
                 generateInterface(table);
             }
             catch (Exception e) {
-                log.error("Error while generating table interface " + table, e);
+                reportError("Error while generating table interface " + table, e);
             }
         }
 
@@ -3627,7 +3627,7 @@ public class JavaGenerator extends AbstractGenerator {
                     generateGlobalObjectNames(udt, AttributeDefinition.class);
             }
             catch (Exception e) {
-                log.error("Error while generating udt " + udt, e);
+                reportError("Error while generating udt " + udt, e);
             }
         }
 
@@ -3753,7 +3753,7 @@ public class JavaGenerator extends AbstractGenerator {
                 }
             }
             catch (Exception e) {
-                log.error("Error while generating routine " + routine, e);
+                reportError("Error while generating routine " + routine, e);
             }
         }
 
@@ -3981,7 +3981,7 @@ public class JavaGenerator extends AbstractGenerator {
                 generateUDTPojo(udt);
             }
             catch (Exception e) {
-                log.error("Error while generating UDT POJO " + udt, e);
+                reportError("Error while generating UDT POJO " + udt, e);
             }
         }
 
@@ -4012,7 +4012,7 @@ public class JavaGenerator extends AbstractGenerator {
                 generateUDTInterface(udt);
             }
             catch (Exception e) {
-                log.error("Error while generating UDT interface " + udt, e);
+                reportError("Error while generating UDT interface " + udt, e);
             }
         }
 
@@ -4046,7 +4046,7 @@ public class JavaGenerator extends AbstractGenerator {
                 generateUDTRecord(udt);
             }
             catch (Exception e) {
-                log.error("Error while generating UDT record " + udt, e);
+                reportError("Error while generating UDT record " + udt, e);
             }
         }
 
@@ -4081,7 +4081,7 @@ public class JavaGenerator extends AbstractGenerator {
                     generateUDTRecordType(udt);
             }
             catch (Exception e) {
-                log.error("Error while generating UDT record types " + udt, e);
+                reportError("Error while generating UDT record types " + udt, e);
             }
         }
 
@@ -4115,12 +4115,12 @@ public class JavaGenerator extends AbstractGenerator {
                             generateRoutine(schema, routine);
                         }
                         catch (Exception e) {
-                            log.error("Error while generating member routines " + routine, e);
+                            reportError("Error while generating member routines " + routine, e);
                         }
                     }
                 }
                 catch (Exception e) {
-                    log.error("Error while generating UDT " + udt, e);
+                    reportError("Error while generating UDT " + udt, e);
                 }
 
                 watch.splitInfo("Member procedures routines");
@@ -4327,7 +4327,7 @@ public class JavaGenerator extends AbstractGenerator {
                 generateArray(schema, array);
             }
             catch (Exception e) {
-                log.error("Error while generating ARRAY record " + array, e);
+                reportError("Error while generating ARRAY record " + array, e);
             }
         }
 
@@ -4484,7 +4484,7 @@ public class JavaGenerator extends AbstractGenerator {
                     generateGlobalObjectNames(e, EnumLiteralDefinition.class);
             }
             catch (Exception ex) {
-                log.error("Error while generating enum " + e, ex);
+                reportError("Error while generating enum " + e, ex);
             }
         }
 
@@ -4755,7 +4755,7 @@ public class JavaGenerator extends AbstractGenerator {
                     generateGlobalObjectNames(routine, ParameterDefinition.class);
             }
             catch (Exception e) {
-                log.error("Error while generating routine " + routine, e);
+                reportError("Error while generating routine " + routine, e);
             }
         }
 
@@ -5045,7 +5045,7 @@ public class JavaGenerator extends AbstractGenerator {
                     generateSyntheticDao(new DefaultSyntheticDaoDefinition(database, schema, dao));
                 }
                 catch (Exception e) {
-                    log.error("Error while generating synthetic DAO " + dao, e);
+                    reportError("Error while generating synthetic DAO " + dao, e);
                 }
             }
         }
@@ -5230,7 +5230,7 @@ public class JavaGenerator extends AbstractGenerator {
                     generateDao(table);
             }
             catch (Exception e) {
-                log.error("Error while generating table DAO " + table, e);
+                reportError("Error while generating table DAO " + table, e);
             }
         }
 
@@ -5870,7 +5870,7 @@ public class JavaGenerator extends AbstractGenerator {
                     generatePojo(table);
             }
             catch (Exception e) {
-                log.error("Error while generating table POJO " + table, e);
+                reportError("Error while generating table POJO " + table, e);
             }
         }
 
@@ -7188,7 +7188,7 @@ public class JavaGenerator extends AbstractGenerator {
                     generateGlobalObjectNames(table, ColumnDefinition.class);
             }
             catch (Exception e) {
-                log.error("Error while generating table " + table, e);
+                reportError("Error while generating table " + table, e);
             }
         }
 
@@ -8795,7 +8795,7 @@ public class JavaGenerator extends AbstractGenerator {
                     generateEmbeddable(schema, embeddable);
             }
             catch (Exception e) {
-                log.error("Error while generating embeddable " + embeddable, e);
+                reportError("Error while generating embeddable " + embeddable, e);
             }
         }
 
@@ -8818,7 +8818,7 @@ public class JavaGenerator extends AbstractGenerator {
                 generateEmbeddablePojo(embeddable);
             }
             catch (Exception e) {
-                log.error("Error while generating embeddable POJO " + embeddable, e);
+                reportError("Error while generating embeddable POJO " + embeddable, e);
             }
         }
 
@@ -8849,7 +8849,7 @@ public class JavaGenerator extends AbstractGenerator {
                 generateEmbeddableInterface(embeddable);
             }
             catch (Exception e) {
-                log.error("Error while generating embeddable interface " + embeddable, e);
+                reportError("Error while generating embeddable interface " + embeddable, e);
             }
         }
 
@@ -12273,5 +12273,31 @@ public class JavaGenerator extends AbstractGenerator {
 
         if (result.modified)
             modifiedFiles.add(out.file());
+    }
+
+    private void reportError(String message, Exception caughtExc) {
+        // It is important to consider the backwards-compatibility implications of this method,
+        // because even though call sites may have set configurator.WithOnError(OnError.FAIL),
+        // they may unknowingly depend on the previous behavior of mere logging of exceptions.
+
+        OnError onError;
+        if (database instanceof AbstractDatabase db) {
+            // N.B.: This is NOT meant as the final implementation, but this allows us to access the
+            // OnError value without a refactor, which would be beyond the scope of this dummy-PR.
+            onError = db.onError();
+        } else {
+            // TBD: Typically the OnError default value is FAIL, but the previous behavior was LOG.
+            onError = OnError.FAIL;
+        }
+
+        switch (onError) {
+            case SILENT:
+                break;
+            case LOG:
+                log.error(message, caughtExc);
+                break;
+            case FAIL:
+                throw new GeneratorException(message, caughtExc);
+        }
     }
 }
